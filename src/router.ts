@@ -1,18 +1,20 @@
 import { Router } from "express";
+import { body } from "express-validator";
+import { createAccount } from "./handlers";
 
 const router = Router();
 
 // Routing
-router.get("/", (req, res) => {
-  res.send("Hello World in express / typescript");
-});
-
-router.get("/aboutus", (req, res) => {
-  res.send("about us / typescript");
-});
-
-router.get("/blog", (req, res) => {
-  res.send("blog / typescript");
-});
+router.post(
+  "/auth/register",
+  body("handle").notEmpty().withMessage("handle can't be empty"),
+  body("name").notEmpty().withMessage("name can't be empty"),
+  body("email").isEmail().withMessage("email not valid"),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("password not valid, min 8 characters"),
+  // body("password").isStrongPassword().withMessage("password not valid"),
+  createAccount
+);
 
 export default router;
