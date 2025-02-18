@@ -5,6 +5,7 @@ import {
   getUser,
   getUserByHandle,
   login,
+  searchByHandle,
   updateProfile,
   uploadImage,
 } from "./handlers";
@@ -40,7 +41,7 @@ router.get("/user", authenticate, getUser);
 router.patch(
   "/user",
   body("handle").notEmpty().withMessage("handle can't be empty"),
-  body("description").notEmpty().withMessage("description can't be empty"),
+  // body("description").notEmpty().withMessage("description can't be empty"),
   handleInputErrors,
   authenticate,
   updateProfile
@@ -50,5 +51,12 @@ router.post("/user/image", authenticate, uploadImage);
 
 // express read : as a dynamic route
 router.get("/:handle", authenticate, getUserByHandle);
+
+router.post(
+  "/search",
+  body("handle").notEmpty().withMessage("Handle can't be empty"),
+  handleInputErrors,
+  searchByHandle
+);
 
 export default router;
