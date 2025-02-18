@@ -90,7 +90,7 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const updateProfile = async (req: Request, res: Response) => {
   try {
-    const { description } = req.body;
+    const { description, links } = req.body;
 
     const handle = slug(req.body.handle, ""); // creating a slug from the handle
 
@@ -107,6 +107,7 @@ export const updateProfile = async (req: Request, res: Response) => {
 
     req.user.description = description;
     req.user.handle = handle;
+    req.user.links = links;
     await req.user.save();
     res.send("Profile updated");
   } catch (e) {
@@ -136,6 +137,24 @@ export const uploadImage = async (req: Request, res: Response) => {
         }
       );
     });
+  } catch (e) {
+    const error = new Error("it was an error");
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getUserByHandle = async (req: Request, res: Response) => {
+  try {
+    const { handle } = req.params;
+    const user = await UserModel.findOne({ handle }).select(
+      "-_id -__v -email -password"
+    );
+    if (!user) {
+      const error = new Error("User not found");
+      res.status(404).json({ error: error.message });
+      return;
+    }
+    res.status(200).json(user);
   } catch (e) {
     const error = new Error("it was an error");
     res.status(500).json({ error: error.message });
